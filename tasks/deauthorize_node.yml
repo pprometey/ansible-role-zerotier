@@ -1,0 +1,23 @@
+---
+- block:
+    - name: Deauthorize (remove) node from ZeroTier Central via API
+      uri:
+        url: "{{ zerotier_api_url }}/api/network/{{ zerotier_network_id }}/member/{{ ansible_local['zerotier']['node_id'] }}"
+        method: DELETE
+        headers:
+          Authorization: bearer {{ zerotier_api_accesstoken }}
+        status_code: [200, 204]
+        force_basic_auth: yes
+      register: deauth_apiresult
+      delegate_to: "{{ zerotier_api_delegate }}"
+      when:
+        - zerotier_api_accesstoken is defined
+        - zerotier_network_id is defined
+        - ansible_local['zerotier']['node_id'] is defined
+        - ansible_local['zerotier']['node_id'] | length > 0
+
+  when:
+    - not ansible_check_mode
+  tags:
+    - configuration
+  become: false

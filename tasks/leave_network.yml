@@ -1,0 +1,13 @@
+---
+- name: Leave ZeroTier network
+  command: zerotier-cli leave {{ zerotier_network_id }}
+  args:
+    removes: /var/lib/zerotier-one/networks.d/{{ zerotier_network_id }}.conf
+  tags:
+    - configuration
+  when:
+    - zerotier_network_id is defined
+    - ansible_local['zerotier']['node_id'] is defined
+    - ansible_local['zerotier']['networks'][zerotier_network_id] is defined
+    - ansible_local['zerotier']['networks'][zerotier_network_id]['status'] == 'OK'
+  become: true

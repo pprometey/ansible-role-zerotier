@@ -1,0 +1,35 @@
+---
+- block: # Uninstall and disable zerotier-one
+    - name: Stop zerotier-one service
+      service:
+        name: zerotier-one
+        state: stopped
+      ignore_errors: true
+
+    - name: Disable zerotier-one service
+      service:
+        name: zerotier-one
+        enabled: false
+      ignore_errors: true
+
+    - name: Uninstall zerotier-one package
+      package:
+        name: zerotier-one
+        state: absent
+      register: zerotier_uninstalled
+
+    - name: Remove ZeroTier data and config directories
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/lib/zerotier-one
+        - /etc/zerotier-one
+        - /var/log/zerotier-one.log
+      ignore_errors: true
+
+  when:
+    - not ansible_check_mode
+  tags:
+    - uninstallation
+    - packages

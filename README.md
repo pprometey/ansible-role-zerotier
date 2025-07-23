@@ -91,3 +91,23 @@ Example Inventory
     [dbservers:vars]
     zerotier_member_description='<AppName> db cluster node'
 ```
+
+Role State Management
+--------------------
+
+By default, this role installs and configures ZeroTier on the target hosts.  
+If you want to **remove** ZeroTier (leave the network, deauthorize the node, and uninstall the package), set the variable `state: absent` for the role in your playbook:
+
+```yaml
+- hosts: servers
+  roles:
+    - role: ansible-role-zerotier
+      state: absent
+```
+
+When `state: absent` is set, the role will:
+- Leave the ZeroTier network (if joined)
+- Deauthorize and remove the node from ZeroTier Central (if API access is configured)
+- Uninstall the `zerotier-one` package and remove related files
+
+If `state` is not set or set to `present`, the role will perform installation and configuration as described above.
